@@ -1,0 +1,14 @@
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\bin\Release\NightBits MGSTPP Resolution Patcher.exe.config
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\bin\Release\NightBits MGSTPP Resolution Patcher.exe
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\bin\Release\NightBits MGSTPP Resolution Patcher.pdb
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\obj\Release\NightBitsMGSTPP Resolution Patcher.csprojResolveAssemblyReference.cache
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\obj\Release\MainWindow.g.cs
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\obj\Release\App.g.cs
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\obj\Release\NightBits MGSTPP Resolution Patcher_MarkupCompile.cache
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\obj\Release\NightBits MGSTPP Resolution Patcher_MarkupCompile.lref
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\obj\Release\MainWindow.baml
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\obj\Release\NightBits MGSTPP Resolution Patcher.g.resources
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\obj\Release\NightBitsMGSTPP_Resolution_Patcher.Properties.Resources.resources
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\obj\Release\NightBitsMGSTPP Resolution Patcher.csproj.GenerateResource.Cache
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\obj\Release\NightBits MGSTPP Resolution Patcher.exe
+J:\Programming\C#\NightBitsMGSTPP-Resolution-Patcher\obj\Release\NightBits MGSTPP Resolution Patcher.pdb

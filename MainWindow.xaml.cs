@@ -167,7 +167,6 @@ namespace NightBitsMGSTPP_Resolution_Patcher
             if (result.HasValue && result.Value)
             {
                 var filename = dialog.FileName;
-                CreateBackup(filename);
                 Exception error;
 
                 if (PatchTheFile(filename, out error))
@@ -197,7 +196,7 @@ namespace NightBitsMGSTPP_Resolution_Patcher
             string[] files = Directory.GetFiles(dirPath);
             int count = files.Count(file => { return file.Contains(fileName + backupExtension); });
             string newFileName = (count == 0) ? filename + backupExtension : $"{fileName} ({count + 1}){backupExtension}";
-            File.Copy(filename, newFileName + ".backup");
+            File.Copy(filename, newFileName);
         }
 
         private static readonly byte[] PatchFind = { 0x39, 0x8E, 0xE3, 0x3F };
@@ -242,6 +241,8 @@ namespace NightBitsMGSTPP_Resolution_Patcher
 
                 if (foundValueForPatching)
                 {
+                    CreateBackup(filename);
+
                     // Save it to another location.
                     File.WriteAllBytes(filename, fileContent);
                 }
