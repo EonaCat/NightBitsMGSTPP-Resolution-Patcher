@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using static NightBitsMGSTPP_Resolution_Patcher.ResolutionDetector;
 
 namespace NightBitsMGSTPP_Resolution_Patcher
 {
@@ -21,6 +22,7 @@ namespace NightBitsMGSTPP_Resolution_Patcher
         public MainWindow()
         {
             InitializeComponent();
+            GetAllValidResolutions();
             FillInKnownResolutions();
             FillInComboBox();
         }
@@ -58,6 +60,7 @@ namespace NightBitsMGSTPP_Resolution_Patcher
             _resolutionsDictionary["1366X768 (16:9)"] = GetBytesArrayFromResolution(1366, 768);
             _resolutionsDictionary["1440X900 (16:10)"] = GetBytesArrayFromResolution(1440, 900);
             _resolutionsDictionary["1680X1050 (16:10)"] = GetBytesArrayFromResolution(1680, 1050);
+            _resolutionsDictionary["1600X1200 (16:10)"] = GetBytesArrayFromResolution(1600, 1200);
             _resolutionsDictionary["1920X1080 (16:9)"] = GetBytesArrayFromResolution(1920, 1080);
             _resolutionsDictionary["2560X1080 (21:9)"] = GetBytesArrayFromResolution(2560, 1080);
             _resolutionsDictionary["3440X1440 (21:9)"] = GetBytesArrayFromResolution(3440, 1440);
@@ -87,6 +90,18 @@ namespace NightBitsMGSTPP_Resolution_Patcher
         // Doesnt work yet
         private void GetAllValidResolutions()
         {
+            DEVMODE vDevMode = new DEVMODE();
+            int i = 0;
+            while (EnumDisplaySettings(null, i, ref vDevMode))
+            {
+                Console.WriteLine("Width:{0} Height:{1} Color:{2} Frequency:{3}",
+                                        vDevMode.dmPelsWidth,
+                                        vDevMode.dmPelsHeight,
+                                        1 << vDevMode.dmBitsPerPel, vDevMode.dmDisplayFrequency
+                                    );
+                i++;
+            }
+
             var scope = new ManagementScope();
 
             var query = new ObjectQuery("SELECT * FROM CIM_VideoControllerResolution");
@@ -153,14 +168,22 @@ namespace NightBitsMGSTPP_Resolution_Patcher
             {
                 var filename = dialog.FileName;
                 CreateBackup(filename);
+                Exception error;
 
-                if (PatchTheFile(filename))
+                if (PatchTheFile(filename, out error))
                 {
                     MessageBox.Show("The file was patched successfully");
                 }
                 else
                 {
-                    MessageBox.Show("The file failed to patch!");
+                    if (error != null)
+                    {
+                        MessageBox.Show($"The file failed to patch! => '{error.Message}'");
+                    }
+                    else
+                    {
+                        MessageBox.Show($"The file failed to patch! => 'Could not find original hexValues, are you sure you are trying to patch an UNPATCHED executable?'");
+                    }
                 }
                 MessageBox.Show("Patcher created by NightBits");
             }
@@ -168,11 +191,13 @@ namespace NightBitsMGSTPP_Resolution_Patcher
 
         private void CreateBackup(string filename)
         {
-            if (File.Exists(filename + ".backup"))
-            {
-                File.Delete(filename + ".backup");
-            }
-            File.Copy(filename, filename + ".backup");
+            string dirPath = Path.GetDirectoryName(filename);
+            string fileName = Path.GetFileName(filename);
+            string backupExtension = ".backup";
+            string[] files = Directory.GetFiles(dirPath);
+            int count = files.Count(file => { return file.Contains(fileName + backupExtension); });
+            string newFileName = (count == 0) ? filename + backupExtension : $"{fileName} ({count + 1}){backupExtension}";
+            File.Copy(filename, newFileName + ".backup");
         }
 
         private static readonly byte[] PatchFind = { 0x39, 0x8E, 0xE3, 0x3F };
@@ -188,8 +213,11 @@ namespace NightBitsMGSTPP_Resolution_Patcher
             return true;
         }
 
-        private bool PatchTheFile(string filename)
+        private bool PatchTheFile(string filename, out Exception error)
         {
+            bool foundValueForPatching = false;
+            error = null;
+
             try
             {
                 // Ensure target directory exists.
@@ -205,18 +233,24 @@ namespace NightBitsMGSTPP_Resolution_Patcher
                 {
                     if (!DetectPatch(fileContent, p)) continue;
 
+                    foundValueForPatching = true;
                     for (int w = 0; w < PatchFind.Length; w++)
                     {
                         fileContent[p + w] = PatchReplace[w];
                     }
                 }
 
-                // Save it to another location.
-                File.WriteAllBytes(filename, fileContent);
-                return true;
+                if (foundValueForPatching)
+                {
+                    // Save it to another location.
+                    File.WriteAllBytes(filename, fileContent);
+                }
+
+                return foundValueForPatching;
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                error = exception;
                 return false;
             }
         }
